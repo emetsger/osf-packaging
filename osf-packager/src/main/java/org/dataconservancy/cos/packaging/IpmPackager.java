@@ -65,8 +65,6 @@ import java.util.stream.Collectors;
  */
 public class IpmPackager {
 
-    static final String WB_HOST = "192.168.99.100";
-
     static final Logger LOG = LoggerFactory.getLogger(IpmPackager.class);
 
     static final String PACKAGE_NAME = "MyPackage";
@@ -250,25 +248,6 @@ public class IpmPackager {
     }
 
     /**
-     * Create a FileInfo that points to file content present in the classpath.
-     * <p>
-     * The logical name of the file represented in the FileInfo is the file's
-     * name, so the /path/to/file.txt will hafe name file.txt
-     * </p>
-     *
-     * @param path
-     *        Path to the file content in the classpath.
-     * @return populated FileInfo
-     * @throws Exception
-     */
-    private static FileInfo contentFromClasspath(String path) throws Exception {
-        FileInfo info = new FileInfo(Paths
-                .get(IpmPackager.class.getResource(path).toURI()));
-        info.setIsFile(true);
-        return info;
-    }
-
-    /**
      * Create a FileInfo that points to file content present at a URL.  The content from the URL is downloaded and
      * stored in a temporary file.
      * <p>
@@ -281,11 +260,6 @@ public class IpmPackager {
      * @throws RuntimeException if the content cannot be downloaded or saved to a temporary file
      */
     private static FileInfo contentFromUrl(String filename, String contentUrl) {
-
-        if (contentUrl.contains("localhost") && WB_HOST != null) {
-            contentUrl = contentUrl.replace("localhost", WB_HOST);
-        }
-
         LOG.debug("  Retrieving '{}' content from '{}'", filename, contentUrl);
 
         Request request = new Request.Builder()
