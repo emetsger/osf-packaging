@@ -97,9 +97,9 @@ public class IpmPackager {
 
         final OsfPackageGraph packageGraph = cxt.getBean("packageGraph", OsfPackageGraph.class);
         final OsfService osfService = cxt.getBean("osfService", OsfService.class);
-        final String registrationId = "w4qxy";
+        final String registrationUrl = "https://api.osf.io/v2/registrations/0zqbo/";
 
-        final Registration registration = osfService.registration(registrationId).execute().body();
+        final Registration registration = osfService.registrationByUrl(registrationUrl).execute().body();
         final List<User> users = registration.getContributors().stream()
                 .map(c -> {
                     try {
