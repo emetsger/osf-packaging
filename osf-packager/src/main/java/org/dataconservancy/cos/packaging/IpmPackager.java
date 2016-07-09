@@ -102,7 +102,15 @@ public class IpmPackager {
         final List<User> users = registration.getContributors().stream()
                 .map(c -> {
                     try {
-                        return osfService.user(c.getId()).execute().body();
+                        if (c.getUserRel() != null) {
+                            return osfService.userByUrl(c.getUserRel()).execute().body();
+                        } else {
+                            String contributorId = c.getId();
+                            if (contributorId.contains("-")) {
+                                contributorId = contributorId.split("-")[1];
+                            }
+                            return osfService.user(contributorId).execute().body();
+                        }
                     } catch (IOException e) {
                         throw new RuntimeException(e.getMessage(), e);
                     }

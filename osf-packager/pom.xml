@@ -80,6 +80,7 @@
     <dependency>
       <groupId>org.dataconservancy.cos</groupId>
       <artifactId>osf-client</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
