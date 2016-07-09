@@ -78,19 +78,23 @@ public class IpmPackager {
                     "classpath*:org/dataconservancy/cos/osf/client/config/applicationContext.xml",
                     "classpath:/org/dataconservancy/cos/packaging/config/applicationContext.xml");
 
-    private static final Property OSF_FILE_NAME = ResourceFactory.createProperty(OwlProperties.OSF_HAS_NAME.fqname());
+    /**
+     * Jena Property instances used by the IpmPackager.
+     */
+    private static final class RdfProperties {
+        private static final Property OSF_FILE_NAME = ResourceFactory.createProperty(OwlProperties.OSF_HAS_NAME.fqname());
 
-    private static final Property OSF_BINARY_URI =
-            ResourceFactory.createProperty(OwlProperties.OSF_HAS_BINARYURI.fqname());
+        private static final Property OSF_BINARY_URI =
+                ResourceFactory.createProperty(OwlProperties.OSF_HAS_BINARYURI.fqname());
 
-    private static final Resource OSF_FILE = ResourceFactory.createResource(OwlClasses.OSF_FILE.fqname());
+        private static final Resource OSF_FILE = ResourceFactory.createResource(OwlClasses.OSF_FILE.fqname());
 
-    private static final Property OSF_HAS_NODE = ResourceFactory.createProperty(OwlProperties.OSF_HAS_NODE.fqname());
+        private static final Property OSF_PROVIDER_NAME =
+                ResourceFactory.createProperty(OwlProperties.OSF_PROVIDER_NAME.fqname());
 
-    private static final Property OSF_PROVIDER_NAME =
-            ResourceFactory.createProperty(OwlProperties.OSF_PROVIDER_NAME.fqname());
+        private static final Property RDF_TYPE = ResourceFactory.createProperty(Rdf.Ns.RDF, "type");
+    }
 
-    private static final Property RDF_TYPE = ResourceFactory.createProperty(Rdf.Ns.RDF, "type");
 
     public static void main(String[] args) throws Exception {
 
@@ -380,7 +384,7 @@ public class IpmPackager {
      * @return true if the {@code subject} is a {@code osf:File}
      */
     private static boolean isFile(Resource subject, Model domainObjects) {
-        return domainObjects.contains(subject, RDF_TYPE, OSF_FILE);
+        return domainObjects.contains(subject, RdfProperties.RDF_TYPE, RdfProperties.OSF_FILE);
 
     }
 
@@ -401,8 +405,8 @@ public class IpmPackager {
      * @return a logical filename for the supplied {@code subject}
      */
     private static String getFileName(Resource subject, Model domainObjects) {
-        String baseName = escape(domainObjects.getProperty(subject, OSF_FILE_NAME).getObject().toString());
-        String providerName = domainObjects.getProperty(subject, OSF_PROVIDER_NAME).getObject().toString();
+        String baseName = escape(domainObjects.getProperty(subject, RdfProperties.OSF_FILE_NAME).getObject().toString());
+        String providerName = domainObjects.getProperty(subject, RdfProperties.OSF_PROVIDER_NAME).getObject().toString();
         return escape(providerName + "_" + baseName);
     }
 
@@ -422,7 +426,7 @@ public class IpmPackager {
      * @return the value of the {@code osf:hasBinaryUri} predicate for the supplied {@code subject}
      */
     private static String getBinaryUri(Resource subject, Model domainObjects) {
-        return domainObjects.getProperty(subject, OSF_BINARY_URI).getObject().asLiteral().getString();
+        return domainObjects.getProperty(subject, RdfProperties.OSF_BINARY_URI).getObject().asLiteral().getString();
     }
 
 }
