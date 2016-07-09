@@ -15,6 +15,7 @@
  */
 package org.dataconservancy.cos.packaging;
 
+import com.github.jasminb.jsonapi.RelationshipResolver;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -93,6 +94,7 @@ public class IpmPackager {
         private static final Property RDF_TYPE = ResourceFactory.createProperty(Rdf.Ns.RDF, "type");
     }
 
+    private static final RelationshipResolver resolver = cxt.getBean("jsonApiRelationshipResolver", RelationshipResolver.class);
 
     public static void main(String[] args) throws Exception {
 
@@ -262,24 +264,16 @@ public class IpmPackager {
     private static FileInfo contentFromUrl(String filename, String contentUrl) {
         LOG.debug("  Retrieving '{}' content from '{}'", filename, contentUrl);
 
-        Request request = new Request.Builder()
-                .get()
-                .url(contentUrl)
-                .build();
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        OkHttpClient client = builder.build();
         File outFile = null;
         try {
-            Response response = client.newCall(request).execute();
-
-            if (!response.isSuccessful()) {
-                throw new RuntimeException("Unable to retrieve content from " + contentUrl + ": " + response.code() + " - " + response.message());
-            }
-
             outFile = new File(System.getProperty("java.io.tmpdir"), filename);
-            IOUtils.copy(response.body().byteStream(),
+            byte[] data = resolver.resolve(contentUrl);
+            if (data == null || data.length == 0) {
+                throw new RuntimeException("Unable to retrieve content from '" + contentUrl + "'");
+            }
+            IOUtils.write(data,
                     new FileOutputStream(outFile));
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
