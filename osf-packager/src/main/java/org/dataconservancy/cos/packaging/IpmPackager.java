@@ -16,9 +16,6 @@
 package org.dataconservancy.cos.packaging;
 
 import com.github.jasminb.jsonapi.RelationshipResolver;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.jena.rdf.model.Model;
