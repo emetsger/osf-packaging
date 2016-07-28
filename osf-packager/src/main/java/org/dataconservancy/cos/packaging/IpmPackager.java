@@ -141,11 +141,21 @@ public class IpmPackager {
 
         IpmPackager packager = new IpmPackager();
 
-        packager.buildPackage(packageGraph);
+        PackageGenerationParameters params =
+                new PropertiesConfigurationParametersBuilder()
+                        .buildParameters(IpmPackager.class
+                                .getResourceAsStream("/PackageGenerationParams.properties"));
+
+        params.addParam(GeneralParameterNames.PACKAGE_LOCATION,
+                System.getProperty("java.io.tmpdir"));
+        params.addParam(GeneralParameterNames.PACKAGE_NAME, PACKAGE_NAME);
+
+
+        packager.buildPackage(packageGraph, params);
 
     }
 
-    public void buildPackage(OsfPackageGraph graph) {
+    public Package buildPackage(OsfPackageGraph graph, PackageGenerationParameters packageGenerationParameters) {
 
         IpmRdfTransformService ipm2rdf =
                 cxt.getBean(IpmRdfTransformService.class);
@@ -180,13 +190,18 @@ public class IpmPackager {
         /* Construct the package */
         Package pkg = null;
         try {
-            pkg = buildPackage(state);
+            //pkg = buildPackage(state);
+            PackageGenerationService generator =
+                cxt.getBean(PackageGenerationService.class);
+            pkg = generator.generatePackage(state, packageGenerationParameters);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
 
+        return pkg;
+
         /* Now just write the package out to a file */
-        FileOutputStream out = null;
+       /* FileOutputStream out = null;
         try {
             out = new FileOutputStream(PACKAGE_NAME + ".tar.gz");
             IOUtils.copy(pkg.serialize(), out);
@@ -198,6 +213,7 @@ public class IpmPackager {
         pkg.cleanupPackage();
 
         System.out.println("DONE");
+        */
     }
     
     /*
@@ -326,7 +342,7 @@ public class IpmPackager {
     }
 
     /* Package building boilerplate */
-    private static Package buildPackage(PackageState state) throws Exception {
+/*    private static Package buildPackage(PackageState state) throws Exception {
         PackageGenerationParameters params =
                 new PropertiesConfigurationParametersBuilder()
                         .buildParameters(IpmPackager.class
@@ -341,7 +357,7 @@ public class IpmPackager {
 
         return generator.generatePackage(state, params);
     }
-
+*/
     /**
      * Escapes troublesome characters from file names.
      * 
