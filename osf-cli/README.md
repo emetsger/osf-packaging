@@ -59,3 +59,25 @@ A command line invocation might look something like this:
 ```java -jar osf-cli-1.0.0-SNAPSHOT.jar -c /home/luser/OSF-Java-Client.cong -m /home/luser/bag.properties -n ImportantPackage -o /home/luser/packages http://192.168.99.100:8000/v2/registrations/vacbu/ ```
 
 In this case, the command is executed in the working directory where the executable jar file osf-cli-1.0.0-SNAPSHOT.jar resides.
+
+##Current Status
+The first iteration of the CLI has soem simplifying constraints in order to deliver some kindof useful functionality. Right now, jusr registrations may be processed. We also have limited some of the options which are available to the GUI tool. The following bag metadata and package generation parameters are supplied to the CLI internally:
+```
+#***************************************************
+# The following fields are REQUIRED to be supplied
+#***************************************************
+Package-Format-Id = BOREM
+BagIt-Profile-Identifier = http://dataconservancy.org/formats/data-conservancy-pkg-1.0
+
+#***************************************************
+# The following fields SHOULD be supplied
+#***************************************************
+#Options for Checksum algorimth are: md5, sha1
+Checksum-Algs = md5
+#Options for Archiving-format are: tar, zip, none
+Archiving-Format = tar
+#Options for Compression-format are: gz, none
+Compression-Format = gz
+#Options for ReM-Serialization-Format are: json, turtle, xml
+ReM-Serialization-Format = TURTLE
+```
