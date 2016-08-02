@@ -2,7 +2,7 @@
 This module supplies a command line interface (CLI) for retrieving a registration from an OSF instance and writing it locally into a package which conforms to the Data Conservancy packaging specification.
 
 ##How It Works
-The CLI uses functionality in the osf-packager module and the OSF JAva client in the osf-client package to attach to the OSF REST APIs (both v1 and v2) on an OSF instance specified by a configuration file whose location must be supplied by the user. Additional parameters will need to be supplied as indicated below. The packer code leverages a workflow from the Dataconservancy Package Tool GUI to construct the package once the content from the target registration has been retrieved. The package is then saved to a location specified by the user as a command line option.
+The CLI uses functionality in the `osf-packager` module and the OSF Java client in the `osf-client` package to attach to the OSF REST APIs (both v1 and v2) on a running OSF instance specified by a configuration file whose location must be supplied by the user. Additional parameters will need to be supplied as indicated below. The packager code leverages a workflow from the Dataconservancy Package Tool GUI to construct the package once the content from the target registration has been retrieved. The package is then saved to a location specified by the user as a command line option.
 
 
 ##Command Line Usage
@@ -52,3 +52,8 @@ The `-o` option takes an absolute path as its value. This path must point to an 
 
 ###Bag Name
 The `-n` option takes a string value. This string will be used as both the name of the bag, and the name of the package.
+
+###Example
+A command line invocation might look something like this:
+
+```java -jar osf-cli-1.0.0-SNAPSHOT.jar -c /home/luser/OSF-Java-Client.cong -m /home/luser/bag.properties -n ImportantPackage -o /home/luser/packages http://192.168.99.100:8000/v2/registrations/vacbu/ ```
