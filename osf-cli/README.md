@@ -56,7 +56,7 @@ The `-n` option takes a string value. This string will be used as both the name 
 ###Example
 A command line invocation might look something like this:
 
-```java -jar osf-cli-1.0.0-SNAPSHOT.jar -c /home/luser/OSF-Java-Client.cong -m /home/luser/bag.properties -n ImportantPackage -o /home/luser/packages http://192.168.99.100:8000/v2/registrations/vacbu/ ```
+```java -jar osf-cli-1.0.0-SNAPSHOT.jar -c /home/luser/OSF-Java-Client.conf -m /home/luser/bag.properties -n ImportantPackage -o /home/luser/packages http://192.168.99.100:8000/v2/registrations/vacbu/ ```
 
 In this case, the command is executed in the working directory where the executable jar file osf-cli-1.0.0-SNAPSHOT.jar resides.
 
