@@ -61,7 +61,7 @@ A command line invocation might look something like this:
 In this case, the command is executed in the working directory where the executable jar file osf-cli-1.0.0-SNAPSHOT.jar resides.
 
 ##Current Status
-The first iteration of the CLI has soem simplifying constraints in order to deliver some kindof useful functionality. Right now, jusr registrations may be processed. We also have limited some of the options which are available to the GUI tool. The following bag metadata and package generation parameters are supplied to the CLI internally:
+The first iteration of the CLI has some simplifying constraints in order to deliver some kindof useful functionality. Right now, only registrations may be processed. We also have limited some of the options which are available to the GUI tool. The following bag metadata and package generation parameters are supplied to the CLI internally:
 ```
 #***************************************************
 # The following fields are REQUIRED to be supplied
