@@ -66,7 +66,7 @@ public class IpmPackager {
 
     static final Logger LOG = LoggerFactory.getLogger(IpmPackager.class);
 
-    private static String PACKAGE_NAME = "MyPackage"; // this will get overridden by the CLI  using the setter
+    private String PACKAGE_NAME = "MyPackage"; // this will get overridden by the CLI  using the setter
 
     static final ClassPathXmlApplicationContext cxt =
             new ClassPathXmlApplicationContext("classpath*:applicationContext.xml",
@@ -184,7 +184,7 @@ public class IpmPackager {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        if(metadata != null){
+        if (metadata != null){
             state.setPackageMetadataList(metadata);
         }
 
@@ -325,7 +325,7 @@ public class IpmPackager {
     }
 
     /* Package building boilerplate */
-    private static Package buildPackage(PackageState state) throws Exception {
+    private Package buildPackage(PackageState state) throws Exception {
         PackageGenerationParameters params =
                 new PropertiesConfigurationParametersBuilder()
                         .buildParameters(IpmPackager.class

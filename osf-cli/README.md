@@ -6,7 +6,7 @@ The CLI uses functionality in the `osf-packager` module and the OSF Java client 
 
 
 ##Command Line Usage
-The CLI takes a single argument which is a URL pointing to the registration whcih is to be packaged (for example, `http://192.168.99.100:8000/v2/registrations/vacbu/`
+The CLI takes a single argument which is a URL pointing to the registration which is to be packaged (for example, `https://api.osf.io/v2/registrations/hejx2`
 This is preceded by a list of command line options as follows:
 
 ```
@@ -20,24 +20,24 @@ This is preceded by a list of command line options as follows:
 The `-c, -m, -n` and `-o` options are required. The OSF Java client must be configured so that it knows which running OSF instance to attach to. Additional metadata is specified in a bag metadata properties file, and is used to describe the bag in accordance with the Data Conservancy BagIt Profile. The package name is used to both name the package and the bag. Finally, the output location will tell the CLI where to write the package.
 
 ###OSF Java Client Configuration
-Configuration mut be supplied for both the v1 and v2 endpoints, since both are needed to build the package.  An example is below:
+Configuration mut be supplied for both the OSF API and Waterbutler endpoints, since both are needed to build the package.  An example is below:
 ```
 {
   "osf": {
     "v2": {
-      "host": "192.168.99.100",
-      "port": "8000",
+      "host": "api.osf.io",
+      "port": "443",
       "basePath": "/v2/",
-      "authHeader": "Basic ZW1ldHNnZXJAZ21haWwuY29tOmZvb2JhcmJheg==",
-      "scheme": "http"
+      "authHeader": "Basic ZW138fTnZXJAZ21haWwu98wIOmZvb2JuU43heg==",
+      "scheme": "https"
     }
   },
   "wb": {
     "v1": {
-      "host": "192.168.99.100",
-      "port": "7777",
+      "host": "files.osf.io",
+      "port": "443",
       "basePath": "/v1/",
-      "scheme": "http"
+      "scheme": "https"
     }
   }
 }
@@ -56,7 +56,7 @@ The `-n` option takes a string value. This string will be used as both the name 
 ###Example
 A command line invocation might look something like this:
 
-```java -jar osf-cli-1.0.0-SNAPSHOT.jar -c /home/luser/OSF-Java-Client.conf -m /home/luser/bag.properties -n ImportantPackage -o /home/luser/packages http://192.168.99.100:8000/v2/registrations/vacbu/ ```
+```java -jar osf-cli-1.0.0-SNAPSHOT.jar -c /home/luser/OSF-Java-Client.conf -m /home/luser/bag.properties -n ImportantPackage -o /home/luser/packages https://api.osf.io/v2/registrations/hejx2 ```
 
 In this case, the command is executed in the working directory where the executable jar file osf-cli-1.0.0-SNAPSHOT.jar resides.
 
