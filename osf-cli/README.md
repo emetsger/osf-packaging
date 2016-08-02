@@ -17,7 +17,7 @@ This is preceded by a list of command line options as follows:
 -o (-output, --output) FILE                  : path to the directory where the package will be written
 -v (-version, --version)                     : print version information
 ```
-The `-c, -m, -n` and `-o` options are required. The OSF Java client must be configured so that it knows which running OSF instance to attach to. Additional metadata is specified in a bag metadata properties file. Some of this metadata will be required in order to produce a conforming package. The package name is one of these required metadat properties - it is used to both name the package and the bag. Finally, the output location will tell the CLI where to write the package.
+The `-c, -m, -n` and `-o` options are required. The OSF Java client must be configured so that it knows which running OSF instance to attach to. Additional metadata is specified in a bag metadata properties file, and is used to describe the bag in accordance with the Data Conservancy BagIt Profile. The package name is used to both name the package and the bag. Finally, the output location will tell the CLI where to write the package.
 
 ###OSF Java Client Configuration
 Configuration mut be supplied for both the v1 and v2 endpoints, since both are needed to build the package.  An example is below:
@@ -61,7 +61,7 @@ A command line invocation might look something like this:
 In this case, the command is executed in the working directory where the executable jar file osf-cli-1.0.0-SNAPSHOT.jar resides.
 
 ##Current Status
-The first iteration of the CLI has some simplifying constraints in order to deliver some kindof useful functionality. Right now, only registrations may be processed. We also have limited some of the options which are available to the GUI tool. The following bag metadata and package generation parameters are supplied to the CLI internally:
+The first iteration of the CLI has some simplifying constraints in order to deliver some kind of useful functionality right away. Right now, only registrations may be processed. We also have limited some of the options which are available to the GUI tool. The following bag metadata and package generation parameters are supplied to the CLI internally:
 ```
 #***************************************************
 # The following fields are REQUIRED to be supplied
