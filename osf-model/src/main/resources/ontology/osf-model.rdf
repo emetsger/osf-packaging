@@ -81,8 +81,8 @@
     <!-- http://www.dataconservancy.org/osf-business-object-model#hasNode -->
     <owl:ObjectProperty rdf:about="&osfbom;hasNode">
         <rdfs:label xml:lang="en">hasNode</rdfs:label>
-        <rdfs:comment xml:lang="en">An object property specifying a node for a provider</rdfs:comment>
-        <rdfs:domain rdf:resource="&osfbom;Provider"/>
+        <rdfs:comment xml:lang="en">An object property specifying an owning node for a provider or comment</rdfs:comment>
+        <rdfs:domain rdf:resource="&osfbom;OSFBusinessObject"/>
         <rdfs:range rdf:resource="&osfbom;Node"/>
     </owl:ObjectProperty>    
     
@@ -110,7 +110,7 @@
     </owl:ObjectProperty>
     
     <owl:ObjectProperty rdf:about="&osfbom;hasParent">
-        <rdfs:label xml:lang="en">hasRoot</rdfs:label>
+        <rdfs:label xml:lang="en">hasParent</rdfs:label>
         <rdfs:comment xml:lang="en">An object property specifying the parent Node of a Node.</rdfs:comment>
         <rdfs:domain rdf:resource="&osfbom;NodeBase"/>
         <rdfs:range rdf:resource="&osfbom;NodeBase"/>
@@ -172,7 +172,37 @@
         <rdfs:domain rdf:resource="&osfbom;FileEntity"/>
         <rdfs:range rdf:resource="&osfbom;Provider"/>
     </owl:ObjectProperty>
-    
+
+    <!-- osfbom:Coment -->
+
+    <owl:ObjectProperty rdf:about="&osfbom;associatedNode">
+        <rdfs:label xml:lang="en">associatedNode</rdfs:label>
+        <rdfs:comment xml:lang="en">The node this comment belongs to.</rdfs:comment>
+        <rdfs:domain rdf:resource="&osfbom;Comment"/>
+        <rdfs:range rdf:resource="&osfbom;Node"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&osfbom;inReplyTo">
+        <rdfs:label xml:lang="en">inReplyTo</rdfs:label>
+        <rdfs:comment xml:lang="en">The item this comment is referring to, a node or another comment</rdfs:comment>
+        <rdfs:domain rdf:resource="&osfbom;Comment"/>
+        <rdfs:range rdf:resource="&osfbom;CommentTarget"/>
+    </owl:ObjectProperty>
+
+    <!-- hasReply is intended to be inferenced -->
+    <owl:ObjectProperty rdf:about="&osfbom;hasReply">
+        <rdfs:label xml:lang="en">hasReply</rdfs:label>
+        <rdfs:comment xml:lang="en">A comment referring to the current node or comment</rdfs:comment>
+        <owl:inverseOf rdf:resource="&osfbom;inReplyTo"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="&osfbom;authoredBy">
+        <rdfs:label xml:lang="en">authoredBy</rdfs:label>
+        <rdfs:comment xml:lang="en">The user who made this comment</rdfs:comment>
+        <rdfs:domain rdf:resource="&osfbom;Comment"/>
+        <rdfs:range rdf:resource="&osfbom;User"/>
+    </owl:ObjectProperty>
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -230,7 +260,7 @@
         <rdfs:label xml:lang="en">hasOrcid</rdfs:label>
         <rdfs:comment xml:lang="en">A data property specifying the User's ORCID</rdfs:comment>
         <rdfs:domain rdf:resource="&osfbom;User"/>
-        <rdfs:range rdf:resource="&dbpedia;orchidId"/>
+        <rdfs:range rdf:resource="&dbpedia;orcidId"/>
     </owl:DatatypeProperty>
 
 
@@ -307,6 +337,7 @@
     <owl:DatatypeProperty rdf:about="&osfbom;hasDateCreated">
         <rdfs:label xml:lang="en">hasDateCreated</rdfs:label>
         <rdfs:comment xml:lang="en">A data property specifying the creation date</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&dcterms;created"/>
         <rdfs:domain rdf:resource="&osfbom;DataEntity"/>
         <rdfs:range rdf:resource="&xsd;dateTime"/>
     </owl:DatatypeProperty>
@@ -317,6 +348,7 @@
     <owl:DatatypeProperty rdf:about="&osfbom;hasDateModified">
         <rdfs:label xml:lang="en">hasDateModified</rdfs:label>
         <rdfs:comment xml:lang="en">A data property specifying the modification date</rdfs:comment>
+        <rdfs:subPropertyOf rdf:resource="&dcterms;modified"/>
         <rdfs:domain rdf:resource="&osfbom;DataEntity"/>
         <rdfs:range rdf:resource="&xsd;dateTime"/>
     </owl:DatatypeProperty>
@@ -773,6 +805,30 @@
         <rdfs:range rdf:resource="&xsd;string"/>
     </owl:DatatypeProperty>
 
+    <!-- osfbom:Comment -->
+
+    <owl:DatatypeProperty rdf:about="&osfbom;hasContent">
+        <rdfs:label xml:lang="en">hasContent</rdfs:label>
+        <rdfs:comment xml:lang="en">The text of this comment</rdfs:comment>
+        <rdfs:domain rdf:resource="&osfbom;Comment"/>
+        <rdfs:range rdf:resource="&xsd;string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&osfbom;isDeleted">
+        <rdfs:label xml:lang="en">isDeleted</rdfs:label>
+        <rdfs:comment xml:lang="en">Whether this comment is deleted</rdfs:comment>
+        <rdfs:domain rdf:resource="&osfbom;Comment"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="&osfbom;isModified">
+        <rdfs:label xml:lang="en">isModified</rdfs:label>
+        <rdfs:comment xml:lang="en">Whether the text of this comment has been changed</rdfs:comment>
+        <rdfs:domain rdf:resource="&osfbom;Comment"/>
+        <rdfs:range rdf:resource="&xsd;boolean"/>
+    </owl:DatatypeProperty>
+
+
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
@@ -840,6 +896,7 @@
    <!-- http://www.dataconservancy.org/osf-business-object-model#NodeBase -->
    <owl:Class rdf:about="&osfbom;NodeBase">
      <rdfs:subClassOf rdf:resource="&osfbom;OSFBusinessObject"/>
+     <rdfs:subClassOf rdf:resource="&osfbom;DataEntity"/>
         <owl:disjointWith rdf:resource="&osfbom;Collection"/>
     <owl:disjointWith rdf:resource="&osfbom;FileBase"/>
     <owl:disjointWith rdf:resource="&osfbom;Contributor"/>
@@ -848,7 +905,7 @@
       NodeBase is a common superclass for Node and Registration
       </rdfs:comment>
    </owl:Class>
-   
+
     <!-- http://www.dataconservancy.org/osf-business-object-model#Node -->
    <owl:Class rdf:about="&osfbom;Node">
         <rdfs:label xml:lang="en">Node</rdfs:label>
@@ -870,6 +927,7 @@
    <owl:Class rdf:about="&osfbom;Collection">
         <rdfs:label xml:lang="en">Collection</rdfs:label>
         <rdfs:subClassOf rdf:resource="&osfbom;OSFBusinessObject"/>
+        <rdfs:subClassOf rdf:resource="&osfbom;DataEntity"/>
         <owl:disjointWith rdf:resource="&osfbom;User"/>
         <owl:disjointWith rdf:resource="&osfbom;NodeBase"/>
     <owl:disjointWith rdf:resource="&osfbom;FileBase"/>
@@ -879,19 +937,10 @@
       </rdfs:comment>
    </owl:Class>
 
-      
+
    <!-- http://www.dataconservancy.org/business-object-model#DataEntity -->
    <owl:Class rdf:about="&osfbom;DataEntity">
        <rdfs:subClassOf rdf:resource="&osfbom;OSFBusinessObject"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:unionOf rdf:parseType="Collection">
-                    <rdf:Description rdf:about="&osfbom;Collection"/>
-                    <rdf:Description rdf:about="&osfbom;NodeBase"/>
-            <rdf:Description rdf:about="&osfbom;File"/>
-                </owl:unionOf>
-            </owl:Class>
-        </owl:equivalentClass>     
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="&osfbom;hasDateCreated"/>
@@ -905,7 +954,7 @@
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
-    
+
     <!-- http://www.dataconservancy.org/osf-business-object-model#Contributor -->
     <!-- TODO: consider subclassing foaf:Person -->
     <!-- TODO: is this really a sub-class of OSFBusinessObject?  Contributors really have 
@@ -925,14 +974,15 @@
       <owl:disjointWith rdf:resource="&osfbom;Contributor"/>
       <owl:disjointWith rdf:resource="&osfbom;Collection"/>
     </owl:Class>    
-    
-    <!-- http://www.dataconservancy.org/osf-business-object-model#File --> 
+
+    <!-- http://www.dataconservancy.org/osf-business-object-model#File -->
     <owl:Class rdf:about="&osfbom;File">
       <rdfs:label xml:lang="en">File</rdfs:label>
+      <rdfs:subClassOf rdf:resource="&osfbom;DataEntity"/>
       <rdfs:subClassOf rdf:resource="&osfbom;FileBase"/>
       <owl:disjointWith rdf:resource="&osfbom;Folder"/>
       <owl:disjointWith rdf:resource="&osfbom;Provider"/>
-    </owl:Class>    
+    </owl:Class>
 
     <!-- http://www.dataconservancy.org/osf-business-object-model#Folder -->
     <owl:Class rdf:about="&osfbom;Folder">
@@ -963,7 +1013,23 @@
             </owl:Class>
        </owl:equivalentClass>  
     </owl:Class>
-  
-    <!-- TODO: Comments that may appear on a Project (or other node categories?) are
-        not represented in this ontology -->
+
+    <!-- http://www.dataconservancy.org/osf-business-object-model#Comment -->
+    <owl:Class rdf:about="&osfbom;Comment">
+      <rdfs:label xml:lang="en">Comment</rdfs:label>
+      <rdfs:subClassOf rdf:resource="&osfbom;OSFBusinessObject"/>
+      <rdfs:subClassOf rdf:resource="&osfbom;DataEntity"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="&osfbom;CommentTarget">
+      <rdfs:label xml:lang="en">CommentTarget</rdfs:label>
+      <rdfs:subClassOf>
+        <owl:Class>
+          <owl:unionOf rdf:parseType="Collection">
+            <rdf:Description rdf:about="&osfbom;Comment"/>
+            <rdf:Description rdf:about="&osfbom;NodeBase"/>
+          </owl:unionOf>
+        </owl:Class>
+      </rdfs:subClassOf>
+    </owl:Class>
 </rdf:RDF>
