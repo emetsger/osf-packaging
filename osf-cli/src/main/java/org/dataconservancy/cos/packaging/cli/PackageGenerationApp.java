@@ -16,10 +16,9 @@
 
 package org.dataconservancy.cos.packaging.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -31,9 +30,7 @@ import org.dataconservancy.cos.osf.client.service.OsfService;
 import org.dataconservancy.cos.osf.packaging.OsfPackageGraph;
 import org.dataconservancy.packaging.tool.api.Package;
 import org.dataconservancy.cos.packaging.IpmPackager;
-import org.dataconservancy.packaging.tool.model.GeneralParameterNames;
-import org.dataconservancy.packaging.tool.model.PackageGenerationParameters;
-import org.dataconservancy.packaging.tool.model.PropertiesConfigurationParametersBuilder;
+import org.dataconservancy.packaging.tool.model.*;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -50,7 +47,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *      in a properties file
  * </p>
  *
- *
+ * @author jrm
  */
 public class PackageGenerationApp {
 
@@ -74,7 +71,7 @@ public class PackageGenerationApp {
     private static String bagName;
 
    /** other bag metadata properties file location */
-    @Option(name = "-m", aliases = {"-metadata", "--metadata"}, usage = "the path to the metadata properties file for additional bag metadata")
+    @Option(name = "-m", aliases = {"-metadata", "--metadata"}, required = true, usage = "the path to the metadata properties file for additional bag metadata")
     private static File bagMetadataFile;
 
     /** Requests the current version number of the cli application. */
@@ -109,18 +106,26 @@ public class PackageGenerationApp {
             if(confFile.exists() && confFile.isFile()) {
                 props.setProperty("osf.client.conf", confFile.toURI().toString());
             } else {
-                System.err.println("Supplied OSF Client Configuration File " + confFile.getCanonicalPath() + " does not exist or is not a file.");
-                System.exit(1);
+                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
+                //System.err.println("Supplied OSF Client Configuration File " + confFile.getCanonicalPath() + " does not exist or is not a file.");
+                //System.exit(1);
             }
 
             if(!outputLocation.exists() || !outputLocation.isDirectory()){
-                System.err.println("Supplied output file directory " + outputLocation.getCanonicalPath() + " does not exist or is not a directory.");
+                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
+                //System.err.println("Supplied output file directory " + outputLocation.getCanonicalPath() + " does not exist or is not a directory.");
+                //System.exit(1);
+            }
+
+            if(!(bagName.length() > 0)){
+                System.err.println("Bag name must have positive length.");
                 System.exit(1);
             }
 
             if(!bagMetadataFile.exists() || !bagMetadataFile.isFile()){
-                System.err.println("Supplied bag metadata file " + bagMetadataFile.getCanonicalPath() + " does not exist or is not a file.");
-                System.exit(1);
+                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
+                //System.err.println("Supplied bag metadata file " + bagMetadataFile.getCanonicalPath() + " does not exist or is not a file.");
+                //System.exit(1);
             }
 
 			/* Run the package generation application proper */
@@ -137,7 +142,7 @@ public class PackageGenerationApp {
 			System.exit(1);
 		} catch (Exception e){
             System.err.println(e.getMessage());
-           // System.exit(e.getCode());
+            System.exit(1);
         }
     }
 
@@ -152,6 +157,8 @@ public class PackageGenerationApp {
         final OsfPackageGraph packageGraph = cxt.getBean("packageGraph", OsfPackageGraph.class);
         final OsfService osfService = cxt.getBean("osfService", OsfService.class);
         IpmPackager ipmPackager = new IpmPackager();
+
+        ipmPackager.setPackageName(bagName);
 
         final Registration registration = osfService.registrationByUrl(registrationUrl).execute().body();
         final List<User> users = registration.getContributors().stream()
@@ -175,14 +182,9 @@ public class PackageGenerationApp {
         packageGraph.add(registration);
         users.forEach(packageGraph::add);
 
-        PackageGenerationParameters packageGenerationParameters =
-                new PropertiesConfigurationParametersBuilder()
-                        .buildParameters(new FileInputStream(bagMetadataFile));
-        packageGenerationParameters.addParam(GeneralParameterNames.PACKAGE_LOCATION,
-                System.getProperty("java.io.tmpdir"));
-        packageGenerationParameters.addParam(GeneralParameterNames.PACKAGE_NAME, bagName);
+        LinkedHashMap<String, List<String>> metadata = createPackageMetadata();
 
-        Package pkg = ipmPackager.buildPackage(packageGraph, packageGenerationParameters);
+        Package pkg = ipmPackager.buildPackage(packageGraph, metadata);
 
         /* Now just write the package out to a file in the output location*/
         File packageFile = new File(outputLocation.getAbsolutePath(), bagName + ".tar.gz");
@@ -200,6 +202,37 @@ public class PackageGenerationApp {
     }
 
 
+    private LinkedHashMap<String, List<String>> createPackageMetadata(){
+        Properties props = new Properties();
+          if(this.bagMetadataFile != null) {
+            if(!this.bagMetadataFile.exists()){
+              throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
+            }
+            try (InputStream fileStream = new FileInputStream(this.bagMetadataFile)) {
+                props.load(fileStream);
+            } catch (FileNotFoundException e) {
+                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION, e);
+            } catch (IOException e) {
+                //log.error(e.getMessage());
+                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
+            }
+        }
+        LinkedHashMap<String, List<String>> metadata = new LinkedHashMap<>();
+
+        List<String> valueList;
+        for (String key : props.stringPropertyNames()) {
+              valueList = Arrays.asList(props.getProperty(key).trim().split("\\s*,\\s*"));
+            /* we make the Package-Name agree with the bag name here, which is what the GUI tool does
+            * if we don't want to enforce this, we can simply use the supplied value from the properties file*/
+            if(key.equals(GeneralParameterNames.PACKAGE_NAME)){
+                metadata.put(key, Arrays.asList(bagName));
+            } else {
+                metadata.put(key, valueList);
+            }
+        }
+
+        return metadata;
+    }
 
 }
 

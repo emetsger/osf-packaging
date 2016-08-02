@@ -94,7 +94,7 @@ public class IpmPackagerTest extends AbstractMockServerTest {
             }
         });
         
-        packager.buildPackage(packageGraph, params);
+        packager.buildPackage(packageGraph, null);
 
     }
 
