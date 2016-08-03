@@ -80,7 +80,7 @@ public class PackageGenerationApp {
     private static String bagName;
 
    /** other bag metadata properties file location */
-    @Option(name = "-m", aliases = {"-metadata", "--metadata"}, required = true, usage = "the path to the metadata properties file for additional bag metadata")
+    @Option(name = "-m", aliases = {"-metadata", "--metadata"}, usage = "the path to the metadata properties file for additional bag metadata")
     private static File bagMetadataFile;
 
     /** Requests the current version number of the cli application. */
@@ -114,16 +114,14 @@ public class PackageGenerationApp {
 
             if (confFile.exists() && confFile.isFile()) {
                 props.setProperty("osf.client.conf", confFile.toURI().toString());
-            } else {
-                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
-                //System.err.println("Supplied OSF Client Configuration File " + confFile.getCanonicalPath() + " does not exist or is not a file.");
-                //System.exit(1);
+            } else {;
+                System.err.println("Supplied OSF Client Configuration File " + confFile.getCanonicalPath() + " does not exist or is not a file.");
+                System.exit(1);
             }
 
             if (!outputLocation.exists() || !outputLocation.isDirectory()) {
-                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
-                //System.err.println("Supplied output file directory " + outputLocation.getCanonicalPath() + " does not exist or is not a directory.");
-                //System.exit(1);
+                System.err.println("Supplied output file directory " + outputLocation.getCanonicalPath() + " does not exist or is not a directory.");
+                System.exit(1);
             }
 
             if (!(bagName.length() > 0)){
@@ -131,10 +129,9 @@ public class PackageGenerationApp {
                 System.exit(1);
             }
 
-            if (!bagMetadataFile.exists() || !bagMetadataFile.isFile()) {
-                throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
-                //System.err.println("Supplied bag metadata file " + bagMetadataFile.getCanonicalPath() + " does not exist or is not a file.");
-                //System.exit(1);
+            if (bagMetadataFile != null && (!bagMetadataFile.exists() || !bagMetadataFile.isFile())) {
+                System.err.println("Supplied bag metadata file " + bagMetadataFile.getCanonicalPath() + " does not exist or is not a file.");
+                System.exit(1);
             }
 
 			/* Run the package generation application proper */
@@ -211,36 +208,38 @@ public class PackageGenerationApp {
     }
 
 
-    private LinkedHashMap<String, List<String>> createPackageMetadata(){
+    private LinkedHashMap<String, List<String>> createPackageMetadata() {
+
         Properties props = new Properties();
-          if (this.bagMetadataFile != null) {
-            if (!this.bagMetadataFile.exists()) {
-              throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
-            }
+
+        if (this.bagMetadataFile != null) {
             try (InputStream fileStream = new FileInputStream(this.bagMetadataFile)) {
                 props.load(fileStream);
             } catch (FileNotFoundException e) {
                 throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION, e);
             } catch (IOException e) {
-                //log.error(e.getMessage());
                 throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION);
             }
-        }
-        LinkedHashMap<String, List<String>> metadata = new LinkedHashMap<>();
 
-        List<String> valueList;
-        for (String key : props.stringPropertyNames()) {
-              valueList = Arrays.asList(props.getProperty(key).trim().split("\\s*,\\s*"));
-            /* we make the Package-Name agree with the bag name here, which is what the GUI tool does
-             if we don't want to enforce this, we can simply use the supplied value from the properties file*/
-            if (key.equals(GeneralParameterNames.PACKAGE_NAME)) {
-                metadata.put(key, Arrays.asList(bagName));
-            } else {
-                metadata.put(key, valueList);
+            LinkedHashMap<String, List<String>> metadata = new LinkedHashMap<>();
+            List<String> valueList;
+
+            for (String key : props.stringPropertyNames()) {
+                valueList = Arrays.asList(props.getProperty(key).trim().split("\\s*,\\s*"));
+                /* we make the Package-Name agree with the bag name here, which is what the GUI tool does
+                 if we don't want to enforce this, we can simply use the supplied value from the properties file*/
+                if (key.equals(GeneralParameterNames.PACKAGE_NAME)) {
+                    metadata.put(key, Arrays.asList(bagName));
+                } else {
+                    metadata.put(key, valueList);
+                }
             }
-        }
 
-        return metadata;
+            return metadata;
+
+        } else {
+            return null;
+        }
     }
 
 }

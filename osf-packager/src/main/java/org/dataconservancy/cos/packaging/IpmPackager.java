@@ -112,9 +112,7 @@ public class IpmPackager {
         this.resolver = resolver;
     }
 
-    public void setPackageName(String packageName){
-        this.PACKAGE_NAME = packageName;
-    }
+    public void setPackageName(String packageName) { this.PACKAGE_NAME = packageName; }
 
 
     public static void main(String[] args) throws Exception {

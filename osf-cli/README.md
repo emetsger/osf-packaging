@@ -17,7 +17,9 @@ This is preceded by a list of command line options as follows:
 -o (-output, --output) FILE                  : path to the directory where the package will be written
 -v (-version, --version)                     : print version information
 ```
-The `-c, -m, -n` and `-o` options are required. The OSF Java client must be configured so that it knows which running OSF instance to attach to. Additional metadata is specified in a bag metadata properties file, and is used to describe the bag in accordance with the Data Conservancy BagIt Profile. The package name is used to both name the package and the bag. Finally, the output location will tell the CLI where to write the package.
+The `-c, -n` and `-o` options are required. The OSF Java client must be configured so that it knows which running OSF instance to attach to.  The package name is used to both name the package and the bag. Finally, the output location will tell the CLI where to write the package.
+
+The `-m` option is optional. Additional metadata may be specified in a bag metadata properties file, and is used to describe the bag in accordance with the [Data Conservancy BagIt Profile](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html) . There are some [reserved metadata names and cardinality restrictions](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html#a2.2.1) .
 
 ###OSF Java Client Configuration
 Configuration mut be supplied for both the OSF API and Waterbutler endpoints, since both are needed to build the package.  An example is below:
