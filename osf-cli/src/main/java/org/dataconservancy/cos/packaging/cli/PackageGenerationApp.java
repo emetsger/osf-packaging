@@ -37,6 +37,7 @@ import org.dataconservancy.cos.osf.packaging.OsfPackageGraph;
 import org.dataconservancy.packaging.tool.api.Package;
 import org.dataconservancy.cos.packaging.IpmPackager;
 
+import org.dataconservancy.packaging.tool.model.BagItParameterNames;
 import org.dataconservancy.packaging.tool.model.GeneralParameterNames;
 import org.dataconservancy.packaging.tool.model.PackageToolException;
 import org.dataconservancy.packaging.tool.model.PackagingToolReturnInfo;
@@ -77,7 +78,7 @@ public class PackageGenerationApp {
 
     /** the bag name (required by the BagIt specification) **/
     @Option(name = "-n", aliases = {"-name", "--name"}, required = true, usage = "the name for the bag")
-    private static String bagName;
+    private static String packageName;
 
    /** other bag metadata properties file location */
     @Option(name = "-m", aliases = {"-metadata", "--metadata"}, usage = "the path to the metadata properties file for additional bag metadata")
@@ -124,7 +125,7 @@ public class PackageGenerationApp {
                 System.exit(1);
             }
 
-            if (!(bagName.length() > 0)){
+            if (!(packageName.length() > 0)) {
                 System.err.println("Bag name must have positive length.");
                 System.exit(1);
             }
@@ -164,7 +165,7 @@ public class PackageGenerationApp {
         final OsfService osfService = cxt.getBean("osfService", OsfService.class);
         IpmPackager ipmPackager = new IpmPackager();
 
-        ipmPackager.setPackageName(bagName);
+        ipmPackager.setPackageName(packageName);
 
         final Registration registration = osfService.registrationByUrl(registrationUrl).execute().body();
         final List<User> users = registration.getContributors().stream()
@@ -193,7 +194,7 @@ public class PackageGenerationApp {
         Package pkg = ipmPackager.buildPackage(packageGraph, metadata);
 
         /* Now just write the package out to a file in the output location*/
-        File packageFile = new File(outputLocation.getAbsolutePath(), bagName + ".tar.gz");
+        File packageFile = new File(outputLocation.getAbsolutePath(), packageName + ".tar.gz");
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(packageFile);
@@ -229,9 +230,11 @@ public class PackageGenerationApp {
                 /* we make the Package-Name agree with the bag name here, which is what the GUI tool does
                  if we don't want to enforce this, we can simply use the supplied value from the properties file*/
                 if (key.equals(GeneralParameterNames.PACKAGE_NAME)) {
-                    metadata.put(key, Arrays.asList(bagName));
+                    metadata.put(key, Arrays.asList(packageName));
                 } else {
-                    metadata.put(key, valueList);
+                    if (!key.equals(BagItParameterNames.BAGIT_PROFILE_ID)) {//The application will provide this
+                        metadata.put(key, valueList);
+                    }
                 }
             }
 

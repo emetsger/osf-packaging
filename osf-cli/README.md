@@ -47,8 +47,7 @@ Configuration mut be supplied for both the OSF API and Waterbutler endpoints, si
 The absolute path to the file containing this configuration is what must be supplied as the value for the `-c` option.
 
 ###Bag Metadata File
-The `-m` option also takes an absolute path as its value. This file contains bag metadata which will conform to the Data Conservancy BagIt Profile specification. Metadata entries will consist of key = value pairs, one per line. The values may be lists where appropriate, expressed as comma separated strings. If the value of Package-Name is specified in this file, it will be superseded by the value specified for the `-n` option below.
-
+The `-m` option also takes an absolute path as its value. This file contains bag metadata which will conform to the Data Conservancy BagIt Profile specification. Metadata entries will consist of key - value pairs, separated by either a `=` or a `:` , one per line.
 ###Output Directory
 The `-o` option takes an absolute path as its value. This path must point to an existing directory on the filesystem.
 
