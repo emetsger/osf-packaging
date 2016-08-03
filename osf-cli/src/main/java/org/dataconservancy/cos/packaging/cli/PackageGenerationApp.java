@@ -227,14 +227,9 @@ public class PackageGenerationApp {
 
             for (String key : props.stringPropertyNames()) {
                 valueList = Arrays.asList(props.getProperty(key).trim().split("\\s*,\\s*"));
-                /* we make the Package-Name agree with the bag name here, which is what the GUI tool does
-                 if we don't want to enforce this, we can simply use the supplied value from the properties file*/
-                if (key.equals(GeneralParameterNames.PACKAGE_NAME)) {
-                    metadata.put(key, Arrays.asList(packageName));
-                } else {
-                    if (!key.equals(BagItParameterNames.BAGIT_PROFILE_ID)) {//The application will provide this
+
+                if (!key.equals(BagItParameterNames.BAGIT_PROFILE_ID)) {//The application will provide this
                         metadata.put(key, valueList);
-                    }
                 }
             }
 
