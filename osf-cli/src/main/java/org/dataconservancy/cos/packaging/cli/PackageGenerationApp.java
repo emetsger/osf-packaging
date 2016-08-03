@@ -76,8 +76,8 @@ public class PackageGenerationApp {
     @Option(name = "-o", aliases = {"-output", "--output"}, usage = "path to the directory where the package will be written")
     private static File outputLocation;
 
-    /** the bag name (required by the BagIt specification) **/
-    @Option(name = "-n", aliases = {"-name", "--name"}, required = true, usage = "the name for the bag")
+    /** the package name  **/
+    @Option(name = "-n", aliases = {"-name", "--name"}, required = true, usage = "the name for the package")
     private static String packageName;
 
    /** other bag metadata properties file location */
