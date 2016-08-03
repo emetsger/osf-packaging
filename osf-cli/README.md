@@ -19,7 +19,7 @@ This is preceded by a list of command line options as follows:
 ```
 The `-c, -n` and `-o` options are required. The OSF Java client must be configured so that it knows which running OSF instance to attach to.  The package name is used to both name the package and the bag. Finally, the output location will tell the CLI where to write the package.
 
-The `-m` option is optional. Additional metadata may be specified in a bag metadata properties file, and is used to describe the bag in accordance with the [Data Conservancy BagIt Profile](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html) . There are some [reserved metadata names and cardinality restrictions](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html#a2.2.1) .
+The `-m` flag is optional. Additional metadata may be specified in a bag metadata properties file, and is used to describe the bag in accordance with the [Data Conservancy BagIt Profile](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html) . There are some [reserved metadata names and cardinality restrictions](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html#a2.2.1) .
 
 ###OSF Java Client Configuration
 Configuration mut be supplied for both the OSF API and Waterbutler endpoints, since both are needed to build the package.  An example is below:
@@ -47,7 +47,7 @@ Configuration mut be supplied for both the OSF API and Waterbutler endpoints, si
 The absolute path to the file containing this configuration is what must be supplied as the value for the `-c` option.
 
 ###Bag Metadata File
-The `-m` option also takes an absolute path as its value. This file contains bag metadata which will conforn to the Data Conservancy BagIt Profile specification. Metadata entries will consist of key = value pairs, one per line. The values may be lists where appropriate, expressed as comma separated strings. If the value of Package-Name is specified in this file, it will be superseded by the value specified for the `-n` option below. 
+The `-m` option also takes an absolute path as its value. This file contains bag metadata which will conform to the Data Conservancy BagIt Profile specification. Metadata entries will consist of key = value pairs, one per line. The values may be lists where appropriate, expressed as comma separated strings. If the value of Package-Name is specified in this file, it will be superseded by the value specified for the `-n` option below.
 
 ###Output Directory
 The `-o` option takes an absolute path as its value. This path must point to an existing directory on the filesystem.
