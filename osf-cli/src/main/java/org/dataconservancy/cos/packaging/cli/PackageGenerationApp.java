@@ -38,7 +38,6 @@ import org.dataconservancy.packaging.tool.api.Package;
 import org.dataconservancy.cos.packaging.IpmPackager;
 
 import org.dataconservancy.packaging.tool.model.BagItParameterNames;
-import org.dataconservancy.packaging.tool.model.GeneralParameterNames;
 import org.dataconservancy.packaging.tool.model.PackageToolException;
 import org.dataconservancy.packaging.tool.model.PackagingToolReturnInfo;
 import org.kohsuke.args4j.Argument;
@@ -168,6 +167,13 @@ public class PackageGenerationApp {
         ipmPackager.setPackageName(packageName);
 
         final Registration registration = osfService.registrationByUrl(registrationUrl).execute().body();
+
+        if (registration == null) {
+            System.err.println("Failed to obtain registration " + registrationUrl + " from endpoint. " +
+                    "\nEither the connection failed, or a registration does not exist at the provided URL.");
+            System.exit(1);
+        }
+
         final List<User> users = registration.getContributors().stream()
                 .map(c -> {
                     try {
