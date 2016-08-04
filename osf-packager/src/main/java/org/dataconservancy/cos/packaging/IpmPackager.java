@@ -182,7 +182,7 @@ public class IpmPackager {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        if (metadata != null){
+        if (metadata != null) {
             state.setPackageMetadataList(metadata);
         }
 
