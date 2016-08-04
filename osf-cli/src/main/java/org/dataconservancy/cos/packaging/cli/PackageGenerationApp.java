@@ -61,7 +61,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class PackageGenerationApp {
 
     @Argument(multiValued = false, usage="URL to the registration to be packaged" )
-    private String registrationUrl = null;
+    private String registrationUrl;
 
      /** Request for help/usage documentation */
     @Option(name = "-h", aliases = {"-help", "--help"}, usage = "print help message")
@@ -114,7 +114,7 @@ public class PackageGenerationApp {
 
             if (confFile.exists() && confFile.isFile()) {
                 props.setProperty("osf.client.conf", confFile.toURI().toString());
-            } else {;
+            } else {
                 System.err.println("Supplied OSF Client Configuration File " + confFile.getCanonicalPath() + " does not exist or is not a file.");
                 System.exit(1);
             }
@@ -199,9 +199,11 @@ public class PackageGenerationApp {
 
         Package pkg = ipmPackager.buildPackage(packageGraph, metadata);
 
-        /* Now just write the package out to a file in the output location*/
+        // Now just write the package out to a file in the output location
+        // this must agree with the package root directory name according to our
+        // dataconservancy bagit profile
         File packageFile = new File(outputLocation.getAbsolutePath(), packageName + ".tar.gz");
-        FileOutputStream out = null;
+        FileOutputStream out;
         try {
             out = new FileOutputStream(packageFile);
             IOUtils.copy(pkg.serialize(), out);
@@ -219,8 +221,8 @@ public class PackageGenerationApp {
 
         Properties props = new Properties();
 
-        if (this.bagMetadataFile != null) {
-            try (InputStream fileStream = new FileInputStream(this.bagMetadataFile)) {
+        if (bagMetadataFile != null) {
+            try (InputStream fileStream = new FileInputStream(bagMetadataFile)) {
                 props.load(fileStream);
             } catch (FileNotFoundException e) {
                 throw new PackageToolException(PackagingToolReturnInfo.CMD_LINE_FILE_NOT_FOUND_EXCEPTION, e);
@@ -234,7 +236,8 @@ public class PackageGenerationApp {
             for (String key : props.stringPropertyNames()) {
                 valueList = Arrays.asList(props.getProperty(key).trim().split("\\s*,\\s*"));
 
-                if (!key.equals(BagItParameterNames.BAGIT_PROFILE_ID)) {//The application will provide this
+                //these required elements will be provided
+                if (!key.equals(BagItParameterNames.BAGIT_PROFILE_ID) && !key.equals(BagItParameterNames.PACKAGE_MANIFEST)) {
                         metadata.put(key, valueList);
                 }
             }

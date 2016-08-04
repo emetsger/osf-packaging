@@ -22,7 +22,7 @@ The `-c, -n` and `-o` options are required. The OSF Java client must be configur
 The `-m` flag is optional. Additional metadata may be specified in a bag metadata properties file, and is used to describe the bag in accordance with the [Data Conservancy BagIt Profile](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html) . There are some [reserved metadata names and cardinality restrictions](http://dataconservancy.github.io/dc-packaging-spec/dc-bagit-profile-1.0.html#a2.2.1) .
 
 ###OSF Java Client Configuration
-Configuration mut be supplied for both the OSF API and Waterbutler endpoints, since both are needed to build the package.  An example is below:
+Configuration must be supplied for both the OSF API and Waterbutler endpoints, since both are needed to build the package.  An example is below:
 ```
 {
   "osf": {
@@ -45,6 +45,14 @@ Configuration mut be supplied for both the OSF API and Waterbutler endpoints, si
 }
 ```
 The absolute path to the file containing this configuration is what must be supplied as the value for the `-c` option.
+
+Be sure to configure an authHeader in the OSF v2 API configuration, which will be sent on every request to the API. You can do this by base64 encoding your login id concatenated to your password with a colon (on MacOS or Linux):
+
+```
+$ echo 'c3po@tatooine.com:excuseme' | base64
+YzNwb0B0YXRvb2luZS5jb206ZXhjdXNlbWUK
+$
+```
 
 ###Bag Metadata File
 The `-m` option also takes an absolute path as its value. This file contains bag metadata which will conform to the Data Conservancy BagIt Profile specification. Metadata entries will consist of key - value pairs, separated by either a `=` or a `:` , one per line.
