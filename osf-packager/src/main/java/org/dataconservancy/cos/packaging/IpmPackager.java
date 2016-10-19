@@ -119,42 +119,6 @@ public class IpmPackager {
 
     public void setPackageName(String packageName) { this.PACKAGE_NAME = packageName; }
 
-
-    public static void main(String[] args) throws Exception {
-
-        final OsfPackageGraph packageGraph = cxt.getBean("packageGraph", OsfPackageGraph.class);
-        final OsfService osfService = cxt.getBean("osfService", OsfService.class);
-        final String registrationUrl = "https://api.osf.io/v2/registrations/0zqbo/";
-
-        final Registration registration = osfService.registrationByUrl(registrationUrl).execute().body();
-        final List<User> users = registration.getContributors().stream()
-                .map(c -> {
-                    try {
-                        if (c.getUserRel() != null) {
-                            return osfService.userByUrl(c.getUserRel()).execute().body();
-                        } else {
-                            String contributorId = c.getId();
-                            if (contributorId.contains("-")) {
-                                contributorId = contributorId.split("-")[1];
-                            }
-                            return osfService.user(contributorId).execute().body();
-                        }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e.getMessage(), e);
-                    }
-                })
-                .collect(Collectors.toList());
-
-        packageGraph.add(registration);
-        users.forEach(packageGraph::add);
-
-        IpmPackager packager = new IpmPackager();
-
-
-        packager.buildPackage(packageGraph, null);
-
-    }
-
     public Package buildPackage(OsfPackageGraph graph,  LinkedHashMap<String, List<String>> metadata) {
 
         IpmRdfTransformService ipm2rdf =
